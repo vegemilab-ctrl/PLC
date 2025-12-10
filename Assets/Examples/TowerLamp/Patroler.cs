@@ -2,27 +2,27 @@ using UnityEngine;
 
 public class Patroler : MonoBehaviour
 {
-    public Transform[] pathPositions; //ÆĞÆ®·Ñ À§Ä¡ ¹è¿­
-    public Transform target;   //ÆĞÆ®·Ñ ÇÏ´Â ´ç»çÀÚ
-    public float moveSpeed = 1f;   //ÆĞÆ®·Ñ ½ºÇÇµå
+    public Transform[] pathPositions; //íŒ¨íŠ¸ë¡¤ ìœ„ì¹˜ ë°°ì—´
+    public Transform target;   //íŒ¨íŠ¸ë¡¤ í•˜ëŠ” ë‹¹ì‚¬ì
+    public float moveSpeed = 1f;   //íŒ¨íŠ¸ë¡¤ ìŠ¤í”¼ë“œ
 
-    private int _index = 0;   //ÇöÀç ÆĞÆ®·Ñ ¸ñÇ¥ À§Ä¡ ¼ø¼­
+    private int _index = 0;   //í˜„ì¬ íŒ¨íŠ¸ë¡¤ ëª©í‘œ ìœ„ì¹˜ ìˆœì„œ
 
     void Start()
     {
-        //transform.childCount´Â ÀÚ½ÄÀÇ °¹¼ö¸¦ ¾Ë¾Æ³¾ ¼ö ÀÖ´Ù.
+        //transform.childCountëŠ” ìì‹ì˜ ê°¯ìˆ˜ë¥¼ ì•Œì•„ë‚¼ ìˆ˜ ìˆë‹¤.
         pathPositions = new Transform[transform.childCount];
         for(int i = 0; i < pathPositions.Length; ++i)
         {
-            //transform.GetChild(¸î¹øÂ°); 0ºÎÅÍ ½ÃÀÛÇØ¼­ ÁöÁ¤µÈ ¼ø¼­ÀÇ ÀÚ½ÄÀ» °¡Á®¿Ã ¼ö ÀÖ´Ù.
+            //transform.GetChild(ëª‡ë²ˆì§¸); 0ë¶€í„° ì‹œì‘í•´ì„œ ì§€ì •ëœ ìˆœì„œì˜ ìì‹ì„ ê°€ì ¸ì˜¬ ìˆ˜ ìˆë‹¤.
             pathPositions[i] = transform.GetChild(i);
         }
     }
 
     void Update()
     {
-        //Vector3.MoveTowards(ÇöÀç À§Ä¡, ¸ñÇ¥À§Ä¡, ÃÖ´ëÀÌµ¿°Å¸®); ÇöÀç À§Ä¡¿¡¼­ ¸ñÇ¥ À§Ä¡¸¦
-        //ÇâÇØ ÃÖ´ë ÀÌµ¿°Å¸®¸¸ Å­ ÀÌµ¿ÇÑ À§Ä¡°ªÀ» ¹İÈ¯ÇÑ´Ù.
+        //Vector3.MoveTowards(í˜„ì¬ ìœ„ì¹˜, ëª©í‘œìœ„ì¹˜, ìµœëŒ€ì´ë™ê±°ë¦¬); í˜„ì¬ ìœ„ì¹˜ì—ì„œ ëª©í‘œ ìœ„ì¹˜ë¥¼
+        //í–¥í•´ ìµœëŒ€ ì´ë™ê±°ë¦¬ë§Œ í¼ ì´ë™í•œ ìœ„ì¹˜ê°’ì„ ë°˜í™˜í•œë‹¤.
         target.position = Vector3.MoveTowards(
             target.position, 
             pathPositions[_index].position, 

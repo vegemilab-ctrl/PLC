@@ -1,122 +1,112 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
-using DG.Tweening;
 
-public class TowerLampController : MonoBehaviour, IPointerClickHandler
+public class TowerLampController : MonoBehaviour
 {
-    //°¢ ·¥ÇÁÀÇ °ÔÀÓ¿ÀºêÁ§Æ® ÀÌ¸§
-    [Header("·¥ÇÁÀÌ¸§")]
+    //ê° ë¨í”„ì˜ ê²Œì„ì˜¤ë¸Œì íŠ¸ì´ë¦„
+    [Header("ë¨í”„ ì´ë¦„")]
     public string redLampName;
     public string yellowLampName;
     public string greenLampName;
+    //ê° ë¨í”„ì˜ ë©”ì‰¬ë Œë”ëŸ¬ 
+    public MeshRenderer redLamp;
+    public MeshRenderer yellowLamp;
+    public MeshRenderer greenLamp;
 
-    //°¢ ·¥ÇÁÀÇ ¸Ş½¬·»´õ·¯
-    private MeshRenderer redLamp;
-    private MeshRenderer yellowLamp;
-    private MeshRenderer greenLamp;
+    private bool _isOnRed = false;
+    private bool _isOnYellow = false;
+    private bool _isOnGreen = false;
 
-    [Header("Control UI")]
-    public bool useUIButton = false;   //UI¸¦ »ç¿ëÇÒ°Å³Ä
-    public bool needUpdateUIPosition;  //UI À§Ä¡ ¾÷µ¥ÀÌÆ®ÇÒ ÇÊ¿ä°¡ ÀÖ³Ä
-    public RectTransform controlUI;    //»ç¿ëÇÒ UI
-    public Transform uiCenter;         //UI Ç¥½Ã À§Ä¡ Á¤º¸
-    public float duration = 0.5f;      //µîÀå ¾Ö´Ï¸ŞÀÌ¼Ç ±æÀÌ
-    public Ease easingType = Ease.OutBounce;   //¾Ö´Ï¸ŞÀÌ¼Ç Å¸ÀÔ
+    //í”„ë¡œí¼í‹°ëŠ” í•¨ìˆ˜ë¥¼ ë³€ìˆ˜ì²˜ëŸ¼ ì‚¬ìš©í•˜ê³  ì •ë³´ì˜ ì€ë‹‰ì„±ì„ ì§€í‚¬ ìˆ˜ ìˆìŒ.
+    public bool IsOnRed
+    {
+        get => _isOnRed;
+        set
+        {
+            if (_isOnRed == value)
+                return;
 
-    private bool _isUIDisplayed = false;   //ÇöÀç UI°¡ Ç¥½ÃµÇ°í ÀÖ´ÂÁö
+            _isOnRed = value;
+            //ë©”í„°ë¦¬ì–¼.EnableKeyward("_EMISSION") í•¨ìˆ˜ë¡œ ë°œê´‘ íš¨ê³¼ ì¼œì§.
+            //ë©”í„°ë¦¬ì–¼.DisableKeyward("_EMISSION") í•¨ìˆ˜ë¡œ ë°œê´‘ íš¨ê³¼ ì œê±°.
+            if (value)
+                redLamp.materials[0].EnableKeyword("_EMISSION");
+            else
+                redLamp.materials[0].DisableKeyword("_EMISSION");
+        }
+    }
+
+    public bool IsOnYellow
+    {
+        get => _isOnYellow;
+        set
+        {
+            if (_isOnYellow == value)
+                return;
+
+            _isOnYellow = value;
+            if (value)
+                yellowLamp.materials[0].EnableKeyword("_EMISSION");
+            else
+                yellowLamp.materials[0].DisableKeyword("_EMISSION");
+        }
+    }
+
+    public bool IsOnGreen
+    {
+        get => _isOnGreen;
+        set
+        {
+            if (_isOnGreen == value)
+                return;
+
+            _isOnGreen = value;
+            if (value)
+                greenLamp.materials[0].EnableKeyword("_EMISSION");
+            else
+                greenLamp.materials[0].DisableKeyword("_EMISSION");
+        }
+    }
 
     private void Start()
     {
-        //transform.Find("ÀÚ½ÄÀÇÀÌ¸§") ÀÚ½Ä °ÔÀÓ¿ÀºêÁ§Æ® Áß¿¡¼­ ÀÌ¸§ÀÌ °°Àº °ÔÀÓ¿ÀºêÁ§Æ® ÇÏ³ª¸¦ ¸®ÅÏÇÑ´Ù.
-        uiCenter = transform.Find("UICenter");
+        GameObject go = null;
+        //GameObject.Find("ì´ë¦„") ì”¬ì•ˆì— ì¡´ì¬í•˜ëŠ” í™œì„±í™” ë˜ì–´ ìˆëŠ” ê²Œì„ì˜¤ë¸Œì íŠ¸ ì¤‘ì—ì„œ í•´ë‹¹ ì´ë¦„ì„ ê°€ì§„ 
+        //ê²Œì„ì˜¤ë¸Œì íŠ¸ë¥¼ ì°¾ì•„ ë°˜í™˜í•œë‹¤.
+        if (redLamp == null)
+        {
+            go = GameObject.Find(redLampName);
+            if (go != null)
+            {
+                //gameObject.GetComponent<êµ¬ì„±ìš”ì†Œ>() ê²Œì„ì˜¤ë¸Œì íŠ¸ì— ì–´íƒœì¹˜ë˜ì–´ ìˆëŠ” í•´ë‹¹ êµ¬ì„±ìš”ì†Œë¥¼ ì°¾ì•„ì„œ 
+                //ìˆìœ¼ë©´ ì°¾ì€ êµ¬ì„±ìš”ì†Œë¥¼ ë°˜í™˜, ì—†ìœ¼ë©´ null ë°˜í™˜
+                redLamp = go.GetComponent<MeshRenderer>();
+                _isOnRed = redLamp.materials[0].IsKeywordEnabled("_EMISSION");
+            }
+        }
 
-        //FindÇÑ°ÍÀÇ °á°ú°ªÀ» °ÙÄÄÆ÷³ÍÆ®ÇÏ°í ~ ¸Ş½¬·»´õ·¯ ±¸¼º¿ä¼Ò ¹İÈ¯! (¼øÂ÷ÀûÀ¸·Î ÁøÇà)
-        //transform¿¡¼­ GameObject·Î º¯°æ / À¯´ÏÆ¼ ¾À¿¡¼­ ÇÏ³ª¸¸ ÀÖ¾î¾ß ÇÔ. ¾Æ·¡ ¹®Àå ÁÖ¼®Ã³¸®ÇÏ°í À¯´ÏÆ¼¿¡¼­ µå·¡±×ÇØµµ µÊ.
-        //GameObject.Find("ÀÌ¸§") ¾À¾È¿¡ Á¸ÀçÇÏ´Â È°¼ºÈ­ µÇ¾î ÀÖ´Â °ÔÀÓ¿ÀºêÁ§Æ® Áß¿¡¼­ ÇØ´ç ÀÌ¸§À» °¡Áø 
-        //°ÔÀÓ¿ÀºêÁ§Æ®¸¦ Ã£¾Æ ¹İÈ¯ÇÑ´Ù.
-        greenLamp = GameObject.Find(greenLampName).GetComponent<MeshRenderer>();
-        yellowLamp = GameObject.Find(yellowLampName).GetComponent<MeshRenderer>();
-        redLamp = GameObject.Find(redLampName).GetComponent<MeshRenderer>();
+        if (yellowLamp == null)
+        {
+            go = GameObject.Find(yellowLampName);
+            if (go != null)
+            {
+                yellowLamp = go.GetComponent<MeshRenderer>();
+                _isOnYellow = yellowLamp.materials[0].IsKeywordEnabled("_EMISSION");
+            }
+        }
 
-        //GetComponentInChildren<±¸¼º¿ä¼Ò>()Á÷°è ÀÚ¼Õ °ÔÀÓ¿ÀºêÁ§Æ®¾È¿¡ ÀÖ´Â ±¸¼º¿ä¼Ò¸¦ °¡Á®¿Â´Ù.
-        //()¾È¿¡ true¸¦ ³ÖÀ¸¸é ºñÈ°¼ºÈ­ µÈ ±¸¼º¿ä¼Òµµ °¡Á®¿Ã ¼ö ÀÖ´Ù.
-        controlUI = GetComponentInChildren<RectTransform>(true);
+        if (greenLamp == null)
+        {
+            go = GameObject.Find(greenLampName);
+            if (go != null)
+            {
+                greenLamp = go.GetComponent<MeshRenderer>();
+                _isOnGreen = greenLamp.materials[0].IsKeywordEnabled("_EMISSION");
+            }
+        }
 
-        TurnOnRedLamp(false);
-        TurnOnYellowLamp(false);
-        TurnOnGreenLamp(false);
-    }
-
-    private void Update()
-    {
-        if (!useUIButton || !_isUIDisplayed || !needUpdateUIPosition || controlUI == null)
-            return;
-
-        controlUI.position = Camera.main.WorldToScreenPoint(uiCenter.position);
-    }
-
-    public void TurnOnRedLamp(bool isOn)
-    {
-        //¸ŞÅÍ¸®¾ó.EnableKeyward("_EMISSION")ÇÔ¼ö·Î ¹ß±¤È¿°ú ÄÑÁü.
-        //¸ŞÅÍ¸®¾ó.DisableKeyward("_EMISSION")ÇÔ¼ö·Î ¹ß±¤È¿°ú Á¦°Å.
-
-        if (isOn)
-            redLamp.materials[0].EnableKeyword("_EMISSION");
-        else
-            redLamp.materials[0].DisableKeyword("_EMISSION");
-    }
-
-    public void TurnOnYellowLamp(bool isOn)
-    {
-        if (isOn)
-            yellowLamp.materials[0].EnableKeyword("_EMISSION");
-        else
-            yellowLamp.materials[0].DisableKeyword("_EMISSION");
-    }
-
-    public void TurnOnGreenLamp(bool isOn)
-    {
-        if (isOn)
-            greenLamp.materials[0].EnableKeyword("_EMISSION");
-        else
-            greenLamp.materials[0].DisableKeyword("_EMISSION");
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (!useUIButton)
-            return;
-
-        if (_isUIDisplayed)
-            return;
-
-        if (controlUI == null)
-            return;
-
-        _isUIDisplayed = true;
-        //transform.SetParent(ºÎ¸ğ°¡ µÉ °ÔÀÓ¿ÀºêÁ§Æ®ÀÇ Æ®·£½ºÆû) ÇØ´ç Æ®·£½ºÆûÀÇ ºÎ¸ğ¸¦ °áÁ¤ÇÒ ¼ö ÀÖ´Ù.
-        //null·Î ³ÖÀ¸¸é ºÎ¸ğ°¡ ¾ø´Â »óÅÂ·Î ¸¸µé ¼ö ÀÖ´Ù.
-        controlUI.SetParent(GameObject.Find("Canvas").transform);
-        //Camera,main.WorldToScreen(¾À ³» °ÔÀÓ¿ÀºêÁ§Æ® ÁÂÇ¥)·Î UI½ºÅ©¸°¿¡ ÇØ´çÇÏ´Â ÁÂÇ¥¸¦ ¾òÀ» ¼ö ÀÖ´Ù.
-        controlUI.position = Camera.main.WorldToScreenPoint(uiCenter.position);
-
-        //gameObject.SetActive(¿Â¿ÀÇÁ) ÇØ´ç °ÔÀÓ¿ÀºêÁ§Æ®ÀÇ È°¼º/ºñÈ°¼º º¯°æÇÔ¼ö
-        controlUI.gameObject.SetActive(true);
-        //µîÀå ¾Ö´Ï¸ŞÀÌ¼Ç
-        controlUI.DOScale(Vector3.one, duration)
-            .SetEase(easingType);
-    }
-
-    public void CloseUI()
-    {
-        //ÅğÀå ¾Ö´Ï¸ŞÀÌ¼Ç
-        controlUI.DOScale(Vector3.zero, duration)
-            .SetEase(easingType)
-            .OnComplete(CompleteOffUI);
-    }
-    private void CompleteOffUI()
-    {
-        controlUI.gameObject.SetActive(false);
-        _isUIDisplayed = false;
+        //í”„ë¡œí¼í‹°ëŠ” í•¨ìˆ˜ë¥¼ ë³€ìˆ˜ì²˜ëŸ¼ ì‚¬ìš©í•˜ê³  ì •ë³´ì˜ ì€ë‹‰ì„±ì„ ì§€í‚¬ ìˆ˜ ìˆìŒ.
+        IsOnRed = false;
+        IsOnYellow = false;
+        IsOnGreen = false;
     }
 }
