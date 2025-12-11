@@ -43,13 +43,14 @@ public class ACMotorController : MonoBehaviour
 
     public bool IsOnForward
     {
+        //set 처음에 호출되는 함수, 이후에 set값을 get에 대입
         get => _isOnForward;
         set
         {
             //if (_isOnForward == value)
             //    return;
 
-            //정방향 회전이 On되면 역방향 회전의 전류를 Off시킨다.
+            //정방향 회전이 On되면 역방향 회전의 전류를 Off시킨다. /포워드-반시계방향, 백워드-시계방향
             if (_isOnForward = value)
                 _isOnBackward = false;
 
@@ -84,5 +85,16 @@ public class ACMotorController : MonoBehaviour
             else
                 _torqueDirection = 0f;
         }
+    }
+    //프로퍼티 : 변수처럼 사용할 수 있는 함수
+    //트루를 가져와서 반전시켜서 호출함 -> 펄스 호출됨
+    public void InvertForward()
+    {
+        IsOnForward = !IsOnForward;
+    }
+
+    public void InvertBackward()
+    {
+        IsOnBackward = !IsOnBackward;
     }
 }

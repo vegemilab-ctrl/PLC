@@ -383,8 +383,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0018179808, y: 0.9675602, z: -0.25253838, w: -0.006965827}
-  m_LocalPosition: {x: 0.073516786, y: 0.3842941, z: 0.7307141}
+  m_LocalRotation: {x: 0.1945983, y: 0.07846666, z: -0.01578544, w: 0.9776121}
+  m_LocalPosition: {x: -0.017988151, y: 0.28159887, z: -0.35500968}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2289,7 +2289,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1887308624099670202, guid: e45feb90c3d2bff4b917285195e65ff6, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6292722002705002597}
+      addedObject: {fileID: 6292722002705002601}
+    - targetCorrespondingSourceObject: {fileID: 1887308624099670202, guid: e45feb90c3d2bff4b917285195e65ff6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6292722002705002602}
   m_SourcePrefab: {fileID: 100100000, guid: e45feb90c3d2bff4b917285195e65ff6, type: 3}
 --- !u!114 &6292722002705002595 stripped
 MonoBehaviour:
@@ -2307,7 +2310,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1887308624099670202, guid: e45feb90c3d2bff4b917285195e65ff6, type: 3}
   m_PrefabInstance: {fileID: 6292722002705002594}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6292722002705002597
+--- !u!114 &6292722002705002601
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2316,10 +2319,154 @@ MonoBehaviour:
   m_GameObject: {fileID: 6292722002705002596}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0aef65d86f2ee1047938b78f1b59a6a0, type: 3}
+  m_Script: {fileID: 11500000, guid: a2c3c2a20dcaa314d98c587795c99fc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  input1: 97
+  input1Down:
+    m_PersistentCalls:
+      m_Calls:
+      - {m_Target: {fileID: 1782475900}, m_TargetAssemblyTypeName: TowerLampController, Assembly-CSharp, m_MethodName: set_IsOnRed, m_Mode: 6, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: , m_BoolArgument: 0}, m_CallState: 2}
+    m_CallsDirty: 1
+  input1Hold:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+  input1Release:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+  input2: 115
+  input2Down:
+    m_PersistentCalls:
+      m_Calls:
+      - {m_Target: {fileID: 1782475900}, m_TargetAssemblyTypeName: TowerLampController, Assembly-CSharp, m_MethodName: set_IsOnYellow, m_Mode: 6, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: , m_BoolArgument: 0}, m_CallState: 2}
+    m_CallsDirty: 1
+  input2Hold:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+  input2Release:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+  input3: 100
+  input3Down:
+    m_PersistentCalls:
+      m_Calls:
+      - {m_Target: {fileID: 1782475900}, m_TargetAssemblyTypeName: TowerLampController, Assembly-CSharp, m_MethodName: set_IsOnGreen, m_Mode: 6, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: , m_BoolArgument: 0}, m_CallState: 2}
+    m_CallsDirty: 1
+  input3Hold:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+  input3Release:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+  input4: 0
+  input4Down:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+  input4Hold:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+  input4Release:
+    m_PersistentCalls:
+      m_Calls: []
+    m_CallsDirty: 1
+--- !u!114 &6292722002705002602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6292722002705002596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0f475c193a2a4eb78a6598c6706e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
+  input1: 97
+  input1Down:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1782475900}
+        m_TargetAssemblyTypeName: TowerLampController, Assembly-CSharp
+        m_MethodName: set_IsOnRed
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  input1Hold:
+    m_PersistentCalls:
+      m_Calls: []
+  input1Release:
+    m_PersistentCalls:
+      m_Calls: []
+  input2: 115
+  input2Down:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1782475900}
+        m_TargetAssemblyTypeName: TowerLampController, Assembly-CSharp
+        m_MethodName: set_IsOnYellow
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  input2Hold:
+    m_PersistentCalls:
+      m_Calls: []
+  input2Release:
+    m_PersistentCalls:
+      m_Calls: []
+  input3: 100
+  input3Down:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1782475900}
+        m_TargetAssemblyTypeName: TowerLampController, Assembly-CSharp
+        m_MethodName: set_IsOnGreen
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  input3Hold:
+    m_PersistentCalls:
+      m_Calls: []
+  input3Release:
+    m_PersistentCalls:
+      m_Calls: []
+  input4: 0
+  input4Down:
+    m_PersistentCalls:
+      m_Calls: []
+  input4Hold:
+    m_PersistentCalls:
+      m_Calls: []
+  input4Release:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

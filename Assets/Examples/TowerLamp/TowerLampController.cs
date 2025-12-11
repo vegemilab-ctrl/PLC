@@ -12,6 +12,24 @@ public class TowerLampController : MonoBehaviour
     public MeshRenderer yellowLamp;
     public MeshRenderer greenLamp;
 
+    //-------------------------------------------------------------------------------------
+    //각 램프의 상태를 반전(토글)시키는 Public 함수 추가 (※램프 키보드 컨트롤 추가된 함수)
+    public void ToggleRedLamp()
+    {
+        IsOnRed = !_isOnRed; // 현재 상태의 반대로 설정
+    }
+
+    public void ToggleYellowLamp()
+    {
+        IsOnYellow = !_isOnYellow;
+    }
+
+    public void ToggleGreenLamp()
+    {
+        IsOnGreen = !_isOnGreen;
+    }
+    //-------------------------------------------------------------------------------------
+
     private bool _isOnRed = false;
     private bool _isOnYellow = false;
     private bool _isOnGreen = false;

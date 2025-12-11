@@ -1775,6 +1775,7 @@ GameObject:
   - component: {fileID: 817900244}
   - component: {fileID: 817900243}
   - component: {fileID: 3469287837828306687}
+  - component: {fileID: 3469287837828306688}
   m_Layer: 0
   m_Name: AOVH-20-1PH
   m_TagString: Untagged
@@ -2196,6 +2197,19 @@ MonoBehaviour:
   torque: 60
   _isOnForward: 0
   _isOnBackward: 0
+--- !u!114 &3469287837828306688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132147777373153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aef65d86f2ee1047938b78f1b59a6a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
 --- !u!1 &3619491476720628023
 GameObject:
   m_ObjectHideFlags: 0
