@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Metal
   layers:
   - Default
   - TransparentFX
@@ -34,8 +35,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Sensor
+  - Magnetic
   - Outline
   m_SortingLayers:
   - name: Default
