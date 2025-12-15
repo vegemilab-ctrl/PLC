@@ -10,12 +10,12 @@ public class MagneticSensor : MonoBehaviour
     //센서 레이어 이름
     public string layerName = "Sensor";
     //센서가 감지 여부작 변경될때마다 호출할 콜백함수가 들어있는 델리게이트 (델리게이트 : 함수를 담을 수 있는 배열)
-    public UnityEvent<bool, string> onChangeDetected;
+    public UnityEvent<bool> onChangeDetected;
 
     //List나 Dictionary를 쓸 때 빨간색으로 에러가 난다면 최상단에 using System.Collections.Generic;를 써야함.
     //현재 감지 여부
     private bool _hasDetectedPrev = false;
-    private bool _hasDectected = false;
+    private bool _hasDetected = false;
     public List<Collider> _detectedList;
 
     private void Start()
@@ -29,12 +29,12 @@ public class MagneticSensor : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         _detectedList.Add(other);
-        _hasDectected = _detectedList.Count > 0;
+        _hasDetected = _detectedList.Count > 0;
 
-        if(_hasDetectedPrev != _hasDectected)        //이전값과 감지된 값이 다른지 확인
-        onChangeDetected?.Invoke(_hasDectected, gameObject.name);     //감지하면 무조건 호출, Invoke(bool값이 들어있는 1개를 호출)
+        if(_hasDetectedPrev != _hasDetected)        //이전값과 감지된 값이 다른지 확인
+        onChangeDetected?.Invoke(_hasDetected);     //감지하면 무조건 호출, Invoke(bool값이 들어있는 1개를 호출)
 
-        _hasDetectedPrev = _hasDectected;
+        _hasDetectedPrev = _hasDetected;
     }
 
     //콜라이더에 들어와있던 다른 콜라이더가 나갔을 경우 호출됨.(IsTrigger 체크되어 있어야만 함)
@@ -42,11 +42,16 @@ public class MagneticSensor : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         _detectedList.Remove(other);    //나와 같은 콜라이더를 찾아서 제거함
-        _hasDectected = _detectedList.Count > 0;
+        _hasDetected = _detectedList.Count > 0;
 
-        if (_hasDetectedPrev != _hasDectected)
-            onChangeDetected?.Invoke(_hasDectected, gameObject.name);
+        if (_hasDetectedPrev != _hasDetected)
+            onChangeDetected?.Invoke(_hasDetected);
 
-        _hasDetectedPrev = _hasDectected;
+        _hasDetectedPrev = _hasDetected;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        
     }
 }

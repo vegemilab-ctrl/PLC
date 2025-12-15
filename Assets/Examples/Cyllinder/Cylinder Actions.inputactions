@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "name": "Cylinder Actions",
+    "maps": [
+        {
+            "name": "Cylinder",
+            "id": "91bac95d-63a8-4d19-91c4-bf3267e04136",
+            "actions": [
+                {
+                    "name": "Forward",
+                    "type": "Button",
+                    "id": "87dbb7a2-080f-430f-bb79-8b583b65c49b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Backward",
+                    "type": "Button",
+                    "id": "d38896a4-b565-4de2-86e3-7229bbe7eb96",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b93d10e2-c05c-4ff2-878c-114640b6bb6b",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Forward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0fbcfe9a-952d-4fd6-8d37-fa3d3ab4c002",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Backward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
