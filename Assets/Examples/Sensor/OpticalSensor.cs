@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class OpticalSensor : MonoBehaviour
 {
@@ -24,10 +25,25 @@ public class OpticalSensor : MonoBehaviour
     //검출할 수 있는 종류
     public string detectableTag = string.Empty;
 
+    public UnityEvent<bool> onChangedDetect;
+
     //검출 여부
     private bool _hasDetected = false;
     //검출 위치
     private Vector3 _detectedPoint;
+
+    public bool HasDetected
+    {
+        get => _hasDetected;
+        set
+        {
+            if (_hasDetected == value)
+                return;
+
+            _hasDetected = value;
+            onChangedDetect?.Invoke(value);
+        }
+    }
 
 
     private void Update()
@@ -55,16 +71,18 @@ public class OpticalSensor : MonoBehaviour
             //검사해야 할 태그가 있지만 검출된 게임오브젝트의 태그가 다를 경우 검출하지 못함.
             if (!string.IsNullOrEmpty(detectableTag) && hit.transform.gameObject.tag != detectableTag)
             {
-                _hasDetected = false;
+                HasDetected = false;
                 return;
             }
 
-            _hasDetected = true;
+            hit.transform.gameObject.SendMessage("OnDetected");
+
+            HasDetected = true;
             _detectedPoint = hit.point;
         }
         else
         {
-            _hasDetected = false;
+            HasDetected = false;
         }
     }
 
