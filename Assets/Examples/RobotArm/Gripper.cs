@@ -31,6 +31,11 @@ public class Gripper : MonoBehaviour
         _pickedItem = null;
     }
 
+    public void SetItem(GameObject item)
+    {
+        _pickedItem = item.transform;
+    }
+
     //줏어라.
     public void Pick()
     {
@@ -60,6 +65,7 @@ public class Gripper : MonoBehaviour
             //손의 운동량만큼 아이템에도 운동량을 적용한다.
             rb.linearVelocity += _velocityPerSec * velocityMultiply;
         }
+        _pickedItem = null;
     }
 
     private void Update()

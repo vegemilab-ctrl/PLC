@@ -37,6 +37,15 @@ public class RobotArmController : MonoBehaviour
         anim.SetTrigger("PickTrigger");
     }
 
+    public void Pick(bool isEnter)
+    {
+        //센서 영역안에 들어올 때만 주울 수 있도록 호출
+        if (!isEnter)
+            return;
+
+        Pick();
+    }
+
     public void OnPick()
     {
         gripper.Pick();

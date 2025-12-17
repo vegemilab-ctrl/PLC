@@ -28,11 +28,16 @@ public class MagneticSensor : MonoBehaviour
     //감지되었다고 알려줌 -> 전기신호를 보냄, 마그네틱이 1개 이상들어왔을 경우를 대비해서 숫자를 카운트함(감지를 하고 있는 상태)
     private void OnTriggerEnter(Collider other)
     {
-        _detectedList.Add(other);
-        _hasDetected = _detectedList.Count > 0;
+        if (other.attachedRigidbody.isKinematic)
+            return;
 
-        if(_hasDetectedPrev != _hasDetected)        //이전값과 감지된 값이 다른지 확인
-        onChangeDetected?.Invoke(_hasDetected);     //감지하면 무조건 호출, Invoke(bool값이 들어있는 1개를 호출)
+        _detectedList.Add(other);
+
+        _hasDetected = _detectedList.Count > 0;
+        if(_hasDetectedPrev != _hasDetected)            //이전값과 감지된 값이 다른지 확인
+        {
+            onChangeDetected?.Invoke(_hasDetected);     //감지하면 무조건 호출, Invoke(bool값이 들어있는 1개를 호출)
+        }
 
         _hasDetectedPrev = _hasDetected;
     }

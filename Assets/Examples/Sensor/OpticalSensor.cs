@@ -25,12 +25,17 @@ public class OpticalSensor : MonoBehaviour
     //검출할 수 있는 종류
     public string detectableTag = string.Empty;
 
+    //검출 여부를 콜백받을 함수들을 넣어둘 수 있다.
     public UnityEvent<bool> onChangedDetect;
+    //검출된 게임오브젝트에 대한 콜백받을 함수들을 넣을 수 있다.
+    public UnityEvent<GameObject> onDetectedObject;
 
     //검출 여부
     private bool _hasDetected = false;
     //검출 위치
     private Vector3 _detectedPoint;
+    //검출된 게임오브젝트
+    private GameObject _detectedObject;
 
     public bool HasDetected
     {
@@ -72,6 +77,8 @@ public class OpticalSensor : MonoBehaviour
             if (!string.IsNullOrEmpty(detectableTag) && hit.transform.gameObject.tag != detectableTag)
             {
                 HasDetected = false;
+                //검출된 오브젝트가 없기 때문에 비워둠.
+                _detectedObject = null;
                 return;
             }
 
@@ -79,10 +86,20 @@ public class OpticalSensor : MonoBehaviour
 
             HasDetected = true;
             _detectedPoint = hit.point;
+            //검출되어있는 오브젝트와 현재 검출된 오브젝트가 다르면
+            if(_detectedObject != hit.transform.gameObject)
+            {
+                //새로 검출된 오브젝트로 교체하고
+                _detectedObject = hit.transform.gameObject;
+                //등록된 콜백함수들에게 알린다.
+                onDetectedObject?.Invoke(_detectedObject);
+            }
         }
         else
         {
             HasDetected = false;
+            //검출된 오브젝트가 없기 때문에 비워둠.
+            _detectedObject = null;
         }
     }
 
