@@ -1,11 +1,9 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(ConfigurableJoint))]
-
-
 public class ServoActuator : MonoBehaviour
-
 {
     //액츄에이터의 구동 방식
     public enum ActuatorType
@@ -38,9 +36,10 @@ public class ServoActuator : MonoBehaviour
     public ControlUnit controlUnit = ControlUnit.mm;
 
     [Header("[2] 기구 파라미터")]
-    public float motorResolution = 131072f;
-    public float gearRatio = 1.0f;
-    public float ballscrewLead = 10f;
+
+    public float motorResolution = 131072f;   //서보모터의 분해능
+    public float gearRatio = 1.0f;                  //연결된 기어의 감속비
+    public float ballscrewLead = 10f;             //1회전당 전진 길이
 
     [Header("[3] 속도 파라미터")]
     [Tooltip("위치 결정 운전시 최대 속도")]
@@ -56,60 +55,457 @@ public class ServoActuator : MonoBehaviour
     public float homingCreepSpeed = 20.0f;
 
     [Header("[4] 가감속 시간")]
+    //가감속 시간
     public float accelTime = 100.0f;
+    //타겟 포지션 도착 오차 
     public float inPosWidth = 0.1f;
 
     [Header("모니터링")]
     public float currentPos_Unit;
     public int currentPulse;
 
+    //펄스값이 변경되면 그값을 받을 함수들을 넣을 델리게이트
+    public UnityEvent<int> onChangedPulse;
+
+    //현재 펄스값에 대한 프로퍼티
+    public int GetCurrentPulse
+    {
+        get => currentPulse;
+        set
+        {
+            if (currentPulse == value)
+                return;
+
+            currentPulse = value;
+            onChangedPulse?.Invoke(value);
+        }
+    }
+
+
     [Header("센서 입력")]
-    public bool LimitSP = false;    //상한 리미트
-    public bool LimitSN = false;    //하한 리미트
-    public bool DOG = false;        //근점 도그
+    public bool isOnLimitSensorPositive = false;      //상한 리미트
+    public bool isOnLimitSensorNegative = false;    //하한 리미트
+    public bool isOnProximityDOG = false;             //근점 도그
 
-    public bool IsReady = false;       //명령을 받을 수 있는 상태 여부
-    public bool IsPosition = false;    //명령 수행 완료 여부
-    public bool isWarning = false;     //에러 경고
-    public bool OPR_Complete = false;  //원점복귀 완료 여부
+    public bool IsOnLSP
+    {
+        get => isOnLimitSensorPositive;
+        set => isOnLimitSensorPositive = value;
+    }
+    public bool IsONLSN
+    {
+        get => isOnLimitSensorNegative;
+        set => isOnLimitSensorNegative = value;
+    }
+    public bool IsOnPDOG
+    {
+        get => isOnProximityDOG;
+        set => isOnProximityDOG = value;
+    }
 
-    //내부에서 처리하기 용이하게 하기위한 
-    private bool _cmd_SON = false;      //서보 모터에 전원을 켜라는 명령이 들어온 상태
-    private bool _cmd_StartPos = false; //지정 위치로 이동하라는 명령이 들어온 상태
+
+    public bool IsReady = false;    //명령을 받을 수 있는 상태 여부
+    public bool IsBusy = false;      //명령 수행중
+    public bool InPosition = false; //명령 수행 완료 여부
+    public bool IsError = false; //에러 경고
+    public bool OPR_Complete = false;   //원점을 찾았다 여부
+
+
+    //내부에서 처리하기 용이하게 하기 위한 
+    private bool _cmd_ServoON = false; //서보 모터에 전원을 켜라는 명령이 들어온 상태
+    private bool _cmd_StartPos = false;  //지정 위치로 이동하라는 명령이 들어온 상태
     private bool _cmd_StartOPR = false; //원점 복귀하라는 명령이 들어온 상태
-    private bool _cmd_JogFwd = false;   //수동 조그 전진 명령이 들어온 상태
-    private bool _cmd_JogRev = false;   //수동 조그 후퇴 명령이 들어온 상태
-    private int _cmd_TargetPulse = 0;   //목표 위치 펄스값
+    private bool _cmd_prev_StartOPR = false; //이전 원점 복귀 명령
+    private bool _cmd_JogFwd = false;    //수동 조그 전진 명령이 들어온 상태
+    private bool _cmd_JogRev = false;    //수동 조그 후퇴 명령이 들어온 상태
+    private int _cmd_TargetPulse = 0;    //목표 위치 펄스값
+
 
     private ConfigurableJoint _joint;
-    private float currentVelocity_Unit = 0f;
-    private float internalTarget_Unit = 0f;
+    private float _currentVelocity_Unit = 0f;
+    private float _internalTarget_Unit = 0f;
 
     [SerializeField]
-    private ActuatorState _currentstate = ActuatorState.Idle;
+    private ActuatorState _currentState = ActuatorState.Idle;
     private bool _homingHitDog = false;
     private int _homingDir = -1;
+    private float _homeOffset_Unit = 0f;
+
 
     private void Awake()
     {
         _joint = GetComponent<ConfigurableJoint>();
 
         //시작 위치 계산
-        float startPos = (actuatorType == ActuatorType.Linear)?
+        float startPos = (actuatorType == ActuatorType.Linear) ?
             -transform.localPosition.z * 1000.0f : transform.localRotation.eulerAngles.x;
 
+        currentPulse = PhysToPulse(startPos);
+        _internalTarget_Unit = PulseToUnit(currentPulse);
+        _homeOffset_Unit = 0f;
 
+    }
+    //모터의 힘(Torque)를 조절하는 함수
+    private void SetJointForce(float force)
+    {
+        JointDrive drive = new JointDrive
+        {
+            positionSpring = force,
+            positionDamper = 100,
+            maximumForce = float.MaxValue
+        };
+
+        if (actuatorType == ActuatorType.Linear)
+        {
+            _joint.zDrive = drive;
+        }
+        else
+        {
+            _joint.angularXDrive = drive;
+        }
+    }
+
+    //펄스 -> 단위(mm/degree/pulse) 변환
+    public float PulseToUnit(int pulse)
+    {
+        //입력받은 펄스값 / 모터의 1회전당 펄스값 => 회전수
+        float revs = (float)pulse / motorResolution;
+        //서보모터의 회전수 * 기어감속비 => 샤프트 회전수
+        float shaftRevs = revs * gearRatio;
+        float unitValue = 0f;
+
+        //리니어 타입일 경우
+        if (controlUnit == ControlUnit.mm)
+        {
+            //전진 길이로 변환. 샤프트 회전수 * 볼스크류리드 => 전진 길이
+            unitValue = shaftRevs * ballscrewLead;
+        }
+        else if (controlUnit == ControlUnit.degree) //회전 타입일 경우
+        {
+            //샤프트 회전수 * 360도 => 회전각도
+            unitValue = shaftRevs * 360f;
+        }
+        else
+        {
+            //펄스 -> 펄스
+            unitValue = pulse;
+        }
+
+        return unitValue + _homeOffset_Unit;
+    }
+
+    //단위(mm/degree) -> 펄스(Pulse) 변환
+    public int PhysToPulse(float physValocity)
+    {
+        //현재 이동값 - 원점 보정값 => 원점 기준 위치 
+        float relativePos = physValocity - _homeOffset_Unit;
+
+        //각 제어방식에 맞게 샤프트의 회전수를 구하고 
+        float shaftRevs = (controlUnit == ControlUnit.mm) ? relativePos / ballscrewLead : relativePos / 360f;
+        //샤프트 회전수 / 기어비 => 서보모터의 회전수
+        float motorRevs = shaftRevs / gearRatio;
+        //모터 회전수 * 모터의 분해능 => 현재 이동한 펄스값
+        return (int)(motorRevs * motorResolution);
     }
 
 
-
-    void Start()
+    //조인트에 물리적인 힘(Torque)을 가하는 함수
+    void ApplyPhysics(float value)
     {
-        
+
+        //작동 방식이 리니어일 경우
+        if (actuatorType == ActuatorType.Linear)
+        {
+            float mmValue = value;
+            //컨트롤 유닛이 mm단위일 때
+            if (controlUnit == ControlUnit.pulse)
+            {
+                mmValue = (value / motorResolution) * gearRatio * ballscrewLead;
+            }
+
+            //조인트에 목표 위치값을 입력
+            //Debug.Log(new Vector3(0, 0, mmValue / 1000.0f));
+            _joint.targetPosition = new Vector3(0, 0, mmValue / 1000.0f);
+        }
+        else   //작동방식이 회전일 경우
+        {
+            //회전 각을 대입했는데
+            float degValue = value;
+            //컨트롤 유닛이 펄스일 경우
+            if (controlUnit == ControlUnit.pulse)
+            {
+                //입력받은 펄스값을 회전 각도 값으로 변환
+                degValue = (value / motorResolution) * gearRatio * 360.0f;
+            }
+
+            //조인트에 목표 회전값을 입력
+            _joint.targetRotation = Quaternion.Euler(degValue, 0, 0);
+        }
     }
 
-    void Update()
+    public int defaultHomingDirection = 1;
+    //원점 복귀 명령
+    private void SetupHoming()
     {
-        
+        //원점 복귀하기 위해 세팅되어야 하는 값들.
+        _currentState = ActuatorState.Homing_Search;
+        _homingDir = defaultHomingDirection;
+        OPR_Complete = false;
+        InPosition = false;
+        _homingHitDog = false;
+    }
+
+    //원점 복귀 완료
+    private void CompletedHoming()
+    {
+        //1. 현재 속도를 0으로 내려서 위치 고정
+        _currentVelocity_Unit = 0f;
+
+        //2. 현재 위치를 기억해서 여기부터 원점이라는 걸 저장.
+        _homeOffset_Unit = _internalTarget_Unit;
+
+        //3. 내외부에 원점 확인했음을 알림.
+        OPR_Complete = true;
+        _cmd_StartOPR = false;
+        _currentState = ActuatorState.Idle;
+    }
+
+    //외부 제어 함수
+    public void Cmd_SetServoON(bool isON)
+    {
+        _cmd_ServoON = isON;
+        if (!isON)
+        {
+            IsReady = false;
+            IsBusy = false;
+            InPosition = false;
+            IsError = false;
+            OPR_Complete = false;
+            _cmd_ServoON = false;
+            _cmd_StartPos = false;
+            _cmd_StartOPR = false;
+            _cmd_prev_StartOPR = false;
+            _cmd_JogFwd = false;
+            _cmd_JogRev = false;
+            _cmd_TargetPulse = 0;
+        }
+        else
+        {
+            _homeOffset_Unit = 0f;
+        }
+    }
+    public void Cmd_Positioning(int pulse)
+    {
+        _cmd_TargetPulse = pulse;
+        _cmd_StartPos = true;
+    }
+    public void Cmd_JogForward(bool isOn) => _cmd_JogFwd = isOn;
+    public void Cmd_JogReverse(bool isOn) => _cmd_JogRev = isOn;
+    public void Cmd_Homing() => _cmd_StartOPR = true;
+    public void Cmd_Reset()
+    {
+        //에러 상태이면
+        if (IsError)
+        {
+            //에러를 없애고
+            IsError = false;
+            //다시 대기모드로 전환해라
+            _currentState = ActuatorState.Idle;
+
+            _cmd_StartOPR = false;
+            _cmd_JogFwd = false;
+            _cmd_JogRev = false;
+            _cmd_StartPos = false;
+            _cmd_TargetPulse = 0;
+        }
+    }
+
+
+    private void FixedUpdate()
+    {
+        if (_joint == null)
+            return;
+
+        if (!_cmd_ServoON && !IsError)
+        {
+            IsReady = false;
+            _currentVelocity_Unit = 0f;
+            //모터에 토크를 0으로 없앰
+            SetJointForce(0);
+
+            //꺼져있지만 외부 충격에 위치가 바뀔수 있으므로 계속 추적해야 나중에
+            //서보 모터를 켰을 때 위치가 튀지 않게 방지할 수 있다.
+            //float currentPos = (actuatorType == ActuatorType.Linear) ?
+            //    transform.localPosition.z * 1000.0f : transform.localRotation.eulerAngles.x;
+
+            ////현재 위치를 펄스로 변환하고
+            //currentPulse = PhysToPulse(currentPos);
+            ////내부 현재 위치값에 펄스 기준 위치값을 변환해서 대입한다. 
+            //_internalTarget_Unit = PulseToUnit(currentPulse);
+            return;
+        }
+
+        IsReady = true;
+        //모터에 강한 토크를 줘서 고정
+        SetJointForce(100000);
+
+        bool isRisingEdge_OPR = (_cmd_StartOPR && !_cmd_prev_StartOPR);
+        _cmd_prev_StartOPR = _cmd_StartOPR;
+
+        float targetVelocity = 0f;
+
+        switch (_currentState)
+        {
+            case ActuatorState.Idle:
+                if (_cmd_JogFwd || _cmd_JogRev) _currentState = ActuatorState.Jogging;
+                else if (_cmd_StartPos) _currentState = ActuatorState.Positioning;
+                else if (isRisingEdge_OPR)
+                {
+                    if (OPR_Complete)
+                    {
+                        //이미 원점은 찾았고, 원점 위치로 고속 이동.
+                        _cmd_TargetPulse = 0;
+                        _cmd_StartPos = true;
+                        _cmd_StartOPR = false;
+                    }
+                    else
+                    {
+                        SetupHoming();
+                    }
+                }
+                break;
+            case ActuatorState.Jogging:         //수동 운전
+                //수동 전진 On일 때
+                if (_cmd_JogFwd)
+                {
+                    //정방향 조그 이동 속도 적용.
+                    targetVelocity = jogSpeed;
+                }
+                else if (_cmd_JogRev)   //수동 후퇴 On일때
+                {
+                    //역방향 조그 이동 속도 적용.
+                    targetVelocity = -jogSpeed;
+                }
+                else
+                {
+                    //대기상태로 돌아감
+                    _currentState = ActuatorState.Idle;
+                }
+                break;
+            case ActuatorState.Positioning:
+                //펄스 명령을 단위(mm)로 변환
+                float targetPos = PulseToUnit(_cmd_TargetPulse);
+                //남은 거리를 계산
+                float distance = targetPos - _internalTarget_Unit;
+                //도착 여부 판정
+                if (Mathf.Abs(distance) <= inPosWidth)
+                {
+                    targetVelocity = 0f;
+                    InPosition = true;
+                    _cmd_StartPos = false;
+                    _currentState = ActuatorState.Idle;
+                }
+                else
+                {
+                    InPosition = false;
+                    targetVelocity = Mathf.Sign(distance) * maxSpeed;
+                    //제동 거리 예측
+                    float stopDist = (Mathf.Abs(_currentVelocity_Unit) * accelTime * 0.001f);
+                    //남은 거리가 제동 거리보다 적으면
+                    if (Mathf.Abs(distance) < stopDist)
+                    {
+                        //비례 제어로 부드럽게 감속하게 함.
+                        targetVelocity = distance * 2.0f;
+                    }
+                }
+                break;
+            case ActuatorState.Homing_Search:
+                //원점을 모르는 상태 -> 찾아다녀야 함.
+                targetVelocity = homingHighSpeed * _homingDir; //설정된 방향으로 고속이동
+
+                //근점 도그 발견
+                if (isOnProximityDOG)
+                {
+                    _currentState = ActuatorState.Homing_Creep; //저속모드로 변환해 원점을 찾아라.
+                    _homingHitDog = true;
+                }
+                else if ((_homingDir == -1 && isOnLimitSensorNegative) || (_homingDir == 1 && isOnLimitSensorPositive))
+                {
+                    _currentVelocity_Unit = 0f;
+                    _homingDir = -_homingDir; //방향을 반전
+                    _currentState = ActuatorState.Homing_Retry;
+                }
+                break;
+            case ActuatorState.Homing_Retry:
+                targetVelocity = homingHighSpeed * _homingDir;
+                if (isOnProximityDOG)
+                {
+                    _currentState = ActuatorState.Homing_Creep;
+                    _homingHitDog = true;
+                }
+                break;
+            case ActuatorState.Homing_Creep:
+                targetVelocity = -homingCreepSpeed;
+
+                //도그를 밟으면 기본 원점 복귀 방향으로 저속 이동해서 원점을 찾는다.
+                if (!isOnProximityDOG && _homingHitDog)
+                {
+                    CompletedHoming();
+                }
+                break;
+            case ActuatorState.Error:
+                targetVelocity = 0f;
+                break;
+        }
+
+
+        bool isHoming =
+            (_currentState == ActuatorState.Homing_Search) ||
+            (_currentState == ActuatorState.Homing_Retry) ||
+            (_currentState == ActuatorState.Homing_Creep);
+
+        //정방향으로 이동하는데 상한 리미트 센서가 켜지면
+        if (isOnLimitSensorPositive && targetVelocity > 0f)
+        {
+            //정지시키고 
+            targetVelocity = 0f;
+            //원점복귀 중이 아니라면
+            if (!isHoming)
+            {
+                //에러로 판단
+                IsError = true;
+                _currentState = ActuatorState.Error;
+            }
+        }
+
+        //역방향으로 이동하는데 하한 리미트 센서가 켜지면
+        if (isOnLimitSensorNegative && targetVelocity < 0f)
+        {
+            //정지시키고 
+            targetVelocity = 0f;
+            //원점복귀 중이 아니라면
+            if (!isHoming)
+            {
+                //에러로 판단
+                IsError = true;
+                _currentState = ActuatorState.Error;
+            }
+        }
+
+        //가감속 적용하기
+        //공식 : 현재 속도 = 이전 속도 + (가속도 * 시간)
+        float referenceSpeed = (_currentState == ActuatorState.Jogging) ? jogSpeed : maxSpeed;
+        float accelRate = referenceSpeed / (accelTime * 0.001f); //초당 속도 변화량
+        //현재 초당 이동 속도
+        _currentVelocity_Unit = Mathf.MoveTowards(_currentVelocity_Unit, targetVelocity, accelRate * Time.fixedDeltaTime);
+        //위치 적분
+        _internalTarget_Unit += _currentVelocity_Unit * Time.fixedDeltaTime;
+        //물리적인 위치로 보내기        
+        ApplyPhysics(_internalTarget_Unit);
+
+        currentPos_Unit = _internalTarget_Unit;
+
+        //현재 물리 위치를 펄스로 변환해서 피드백용으로 보내기
+        GetCurrentPulse = PhysToPulse(_internalTarget_Unit);
     }
 }
