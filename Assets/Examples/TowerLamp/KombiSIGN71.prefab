@@ -160,14 +160,51 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 9195039569153653537}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 3562985852523184174}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
+    - targetCorrespondingSourceObject: {fileID: -7852619261660361915, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6029104814208232593}
+      addedObject: {fileID: 2983483932611747929}
+    - targetCorrespondingSourceObject: {fileID: -2936606190431501520, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8759247897173673211}
+    - targetCorrespondingSourceObject: {fileID: -5491151017008764842, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4637821044096222096}
   m_SourcePrefab: {fileID: 100100000, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
+--- !u!1 &429421424540176046 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7852619261660361915, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
+  m_PrefabInstance: {fileID: 1652953968272262635}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2983483932611747929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429421424540176046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c05899e1b62e1f4283e4131a73bee3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lamp: {fileID: 0}
+  address: Y22
+  onChangedLamp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2983483932611747929}
+        m_TargetAssemblyTypeName: LampController, Assembly-CSharp
+        m_MethodName: set_TurnOn
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &1259531926433014272 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
@@ -178,24 +215,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
   m_PrefabInstance: {fileID: 1652953968272262635}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &9195039569153653537
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1887308624099670202}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec74895e605103342a251bea97ddca64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  redLampName: RedLamp
-  yellowLampName: YellowLamp
-  greenLampName: GreenLamp
-  redLamp: {fileID: 0}
-  yellowLamp: {fileID: 0}
-  greenLamp: {fileID: 0}
 --- !u!136 &3562985852523184174
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -219,25 +238,71 @@ CapsuleCollider:
   m_Height: 0.3
   m_Direction: 1
   m_Center: {x: 0, y: 0.065, z: 0}
---- !u!114 &6029104814208232593
+--- !u!1 &2683014934263639485 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5491151017008764842, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
+  m_PrefabInstance: {fileID: 1652953968272262635}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4637821044096222096
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1887308624099670202}
+  m_GameObject: {fileID: 2683014934263639485}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5113d7358f01368409f9ae701c7143a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c05899e1b62e1f4283e4131a73bee3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layermask:
-    serializedVersion: 2
-    m_Bits: 0
-  controlUIName: 
-  eventCam: {fileID: 0}
-  controlUI: {fileID: 0}
-  uiCenter: {fileID: 0}
-  needUpdateUIPosition: 0
-  duration: 0.5
-  easingType: 30
+  lamp: {fileID: 0}
+  address: Y20
+  onChangedLamp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4637821044096222096}
+        m_TargetAssemblyTypeName: LampController, Assembly-CSharp
+        m_MethodName: set_TurnOn
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!1 &4742128619876173531 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -2936606190431501520, guid: 135434f84a7040f45beac0eb5dc13238, type: 3}
+  m_PrefabInstance: {fileID: 1652953968272262635}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8759247897173673211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4742128619876173531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c05899e1b62e1f4283e4131a73bee3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lamp: {fileID: 0}
+  address: Y21
+  onChangedLamp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8759247897173673211}
+        m_TargetAssemblyTypeName: LampController, Assembly-CSharp
+        m_MethodName: set_TurnOn
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
