@@ -43,6 +43,12 @@ public class LampController : MonoBehaviour
                 _lampMaterial.DisableKeyword("_EMISSION");
         }
     }
+
+    public void ChangedValue(short readValue)
+    {
+        TurnOn = readValue == 0 ? false : true;
+    }
+
     #endregion
 
     #region Unity event method
@@ -69,5 +75,12 @@ public class LampController : MonoBehaviour
 
         TurnOn = false;
     }
+
+    private void Start()
+    {
+        MXRequester.Get.AddDeviceAddress(address, ChangedValue);
+    }
     #endregion
+
+
 }

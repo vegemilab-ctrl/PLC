@@ -1814,6 +1814,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1544995583}
   - component: {fileID: 1544995582}
+  - component: {fileID: 1544995584}
   m_Layer: 0
   m_Name: MXComponent
   m_TagString: Untagged
@@ -1837,50 +1838,21 @@ MonoBehaviour:
   onChangeValue0:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 223589276}
-        m_TargetAssemblyTypeName: LampController, Assembly-CSharp
-        m_MethodName: set_TurnOn
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      - {m_Target: {fileID: 223589276}, m_TargetAssemblyTypeName: LampController, Assembly-CSharp, m_MethodName: set_TurnOn, m_Mode: 0, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: , m_BoolArgument: 0}, m_CallState: 2}
+    m_CallsDirty: 1
   address1: Y21
   onChangeValue1:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2146973745}
-        m_TargetAssemblyTypeName: LampController, Assembly-CSharp
-        m_MethodName: set_TurnOn
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      - {m_Target: {fileID: 2146973745}, m_TargetAssemblyTypeName: LampController, Assembly-CSharp, m_MethodName: set_TurnOn, m_Mode: 0, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: , m_BoolArgument: 0}, m_CallState: 2}
+    m_CallsDirty: 1
   address2: Y22
   onChangeValue2:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 62325083}
-        m_TargetAssemblyTypeName: LampController, Assembly-CSharp
-        m_MethodName: set_TurnOn
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      - {m_Target: {fileID: 62325083}, m_TargetAssemblyTypeName: LampController, Assembly-CSharp, m_MethodName: set_TurnOn, m_Mode: 0, m_Arguments: {m_ObjectArgument: {fileID: 0}, m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0, m_FloatArgument: 0, m_StringArgument: , m_BoolArgument: 0}, m_CallState: 2}
+    m_CallsDirty: 1
+  _isConnected: 0
 --- !u!4 &1544995583
 Transform:
   m_ObjectHideFlags: 0
@@ -1896,6 +1868,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1544995584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1544995581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e6271247a8a52c40a6a3c1f5b74502c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interval: 100
+  _capacity: 100
+  _stationNumber: 1
+  _password: 
+  _addressList: []
 --- !u!1 &1864519070
 GameObject:
   m_ObjectHideFlags: 0
